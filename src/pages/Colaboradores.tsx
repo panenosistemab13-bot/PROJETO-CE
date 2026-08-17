@@ -788,12 +788,13 @@ export function Colaboradores() {
       {/* 3D 360-Degree Panorama: Edifício João Lima (Grupo 3corações) */}
       <ThreePanorama imageUrl={activePanoramaImage} interactive={hideContent} />
 
-      {/* Backdrop overlay */}
+      {/* Subtle vignette overlay without blurring the 3D panorama */}
       <div
-        className={`fixed inset-0 z-[-1] pointer-events-none bg-black/45 backdrop-blur-[0.5px] transition-all duration-700 ${
-          hideContent ? 'bg-transparent backdrop-blur-none' : ''
+        className={`fixed inset-0 z-[-1] pointer-events-none bg-gradient-to-t from-[#070a0f]/60 via-transparent to-[#070a0f]/40 transition-all duration-700 ${
+          hideContent ? 'opacity-0' : 'opacity-100'
         }`}
       />
+      <div className="fixed inset-0 z-[-1] pointer-events-none bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(201,162,101,0.03),transparent_90%)]" />
 
       {/* External 3D Hooks for Three.js / Spline Integrations */}
       <div id="3d-colaboradores-container" className="fixed left-0 top-0 bottom-0 w-1/4 pointer-events-none z-0" />

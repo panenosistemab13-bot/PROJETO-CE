@@ -287,8 +287,9 @@ export function Veiculos() {
       {/* 3D 360-Degree Panoramic Interactive Background */}
       <ThreePanorama imageUrl={bgVeiculos} interactive={hideContent} />
 
-      {/* Subtle vignette layer to enhance contrast */}
-      <div className={`fixed inset-0 z-[-1] pointer-events-none bg-black/35 backdrop-blur-[1px] transition-all duration-1000 ${hideContent ? 'bg-transparent backdrop-blur-none' : ''}`} />
+      {/* Subtle vignette layer to enhance contrast without blurring 3D panorama */}
+      <div className={`fixed inset-0 z-[-1] pointer-events-none bg-gradient-to-t from-[#070a0f]/60 via-transparent to-[#070a0f]/40 transition-all duration-700 ${hideContent ? 'opacity-0' : 'opacity-100'}`} />
+      <div className="fixed inset-0 z-[-1] pointer-events-none bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(201,162,101,0.03),transparent_90%)]" />
 
       {/* 3D External Container Hooks for Three.js / Spline models */}
       <div id="3d-vehicle-container" className="fixed right-0 top-0 bottom-0 w-1/4 pointer-events-none z-0" />

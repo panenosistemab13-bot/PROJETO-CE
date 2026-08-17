@@ -24,6 +24,12 @@ import {
   Check,
   Calendar,
   FileText,
+  Eye,
+  EyeOff,
+  Compass,
+  Maximize2,
+  Shield,
+  Radio,
 } from 'lucide-react';
 import {
   PlantaoItem,
@@ -33,6 +39,9 @@ import {
 } from '../data/plantaoData';
 import { PlantaoRecordModal } from '../components/modals/PlantaoRecordModal';
 import { AddPlantaoUpdateModal } from '../components/modals/AddPlantaoUpdateModal';
+import { ThreePanorama } from '../components/ThreePanorama';
+import { LateralGoldScrollbar } from '../components/LateralGoldScrollbar';
+import bgPlantao360 from '../assets/images/cco_plantao_360_1786994085712.jpg';
 
 const LOCAL_STORAGE_KEY = 'cco_passagem_plantao_data_v1';
 
@@ -48,6 +57,9 @@ export function PassagemPlantao() {
     }
     return INITIAL_PLANTAO_ITEMS;
   });
+
+  // 360-degree wallpaper immersive toggle
+  const [hideContent, setHideContent] = useState(false);
 
   // Save to local storage whenever items change
   useEffect(() => {
@@ -228,9 +240,55 @@ export function PassagemPlantao() {
   };
 
   return (
-    <div className="max-w-[2560px] mx-auto flex flex-col gap-5 relative z-10 pb-12">
+    <div className="max-w-[2560px] mx-auto flex flex-col gap-5 relative z-10 select-none pb-16">
+      {/* Lateral Golden Scrollbar matching the Veiculos and Colaboradores pages */}
+      <LateralGoldScrollbar />
+
+      {/* 3D 360-Degree Panoramic Interactive Background (Centro de Controle de Operações - Grupo 3corações) */}
+      <ThreePanorama imageUrl={bgPlantao360} interactive={hideContent} />
+
+      {/* Backdrop vignette without blurring the 3D panorama */}
+      <div
+        className={`fixed inset-0 z-[-1] pointer-events-none bg-gradient-to-t from-[#070a0f]/60 via-transparent to-[#070a0f]/40 transition-all duration-700 ${
+          hideContent ? 'opacity-0' : 'opacity-100'
+        }`}
+      />
+      <div className="fixed inset-0 z-[-1] pointer-events-none bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(201,162,101,0.03),transparent_90%)]" />
+
+      {/* External 3D Hooks for Three.js / Spline Integrations */}
+      <div id="3d-plantao-container" className="fixed right-0 top-0 bottom-0 w-1/4 pointer-events-none z-0" />
+      <div id="3d-radar-container" className="fixed left-0 bottom-0 w-1/6 pointer-events-none z-0" />
+
+      {/* Floating 360 Exploration Bar when in immersive mode */}
+      {hideContent && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-[#0c1017]/95 border border-[#c9a265]/70 px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div className="w-9 h-9 rounded-xl bg-[#c9a265]/20 border border-[#c9a265]/40 flex items-center justify-center text-[#dfbe85]">
+            <Compass className="w-5 h-5 animate-spin" style={{ animationDuration: '10s' }} />
+          </div>
+          <div className="text-left pr-3">
+            <div className="text-xs font-bold text-white flex items-center gap-1.5 font-serif">
+              <span>CCO 24h &bull; Centro de Operações 360° Full HD</span>
+            </div>
+            <p className="text-[11px] text-[#dfbe85]">
+              Arraste com o mouse para explorar o ambiente 3D em 360 graus
+            </p>
+          </div>
+          <button
+            onClick={() => setHideContent(false)}
+            className="px-4 py-2 bg-gradient-to-r from-[#dfbe85] via-[#c9a265] to-[#a37c3f] hover:brightness-110 text-[#140e06] font-bold text-xs rounded-xl shadow-lg shadow-[#c9a265]/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Voltar ao Painel</span>
+          </button>
+        </div>
+      )}
+
       {/* 1. TOP HEADER & SHIFT BANNER */}
-      <div className="bg-[#0f141f] border border-[#1e2738] rounded-2xl p-5 shadow-xl relative overflow-hidden">
+      <div
+        className={`bg-[#0c1017]/90 border border-[#1e2738]/90 rounded-2xl p-5 shadow-2xl backdrop-blur-xl relative overflow-hidden transition-all duration-500 ${
+          hideContent ? 'opacity-0 scale-95 pointer-events-none -translate-y-4' : ''
+        }`}
+      >
         {/* Subtle decorative glow */}
         <div className="absolute top-0 right-0 w-96 h-32 bg-[#c9a265]/5 blur-3xl pointer-events-none" />
 
@@ -248,17 +306,36 @@ export function PassagemPlantao() {
                   CCO 24H
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Quadro Integrado de Transição de Turno, Ocorrências em Trânsito & Atualizações
+              <p className="text-xs text-slate-300 mt-0.5 font-medium">
+                Quadro Integrado de Transição de Turno, Ocorrências em Trânsito & Atualizações &bull; Grupo 3corações
               </p>
             </div>
           </div>
 
           {/* Quick Action Buttons */}
           <div className="flex flex-wrap items-center gap-2">
+            {/* 360 View Toggle Button */}
+            <button
+              onClick={() => setHideContent(!hideContent)}
+              className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-black/70 hover:bg-black/95 border border-[#c9a265]/60 hover:border-[#c9a265] text-[#dfbe85] hover:text-white transition-all duration-300 shadow-2xl backdrop-blur-md cursor-pointer active:scale-95 text-xs font-bold uppercase tracking-wider"
+              title="Alternar para visualização 360° em tela cheia"
+            >
+              {hideContent ? (
+                <>
+                  <Eye className="w-4 h-4 text-[#c9a265] animate-pulse" />
+                  <span>Mostrar Painel</span>
+                </>
+              ) : (
+                <>
+                  <EyeOff className="w-4 h-4 text-[#c9a265]" />
+                  <span>Ver Apenas 360°</span>
+                </>
+              )}
+            </button>
+
             <button
               onClick={handleCopyReport}
-              className="px-3.5 py-2 rounded-xl bg-[#151c2a] hover:bg-[#1e283c] border border-[#243147] text-slate-200 hover:text-white text-xs font-semibold flex items-center space-x-2 transition-all cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-[#151c2a]/90 hover:bg-[#1e283c] border border-[#243147] text-slate-200 hover:text-white text-xs font-semibold flex items-center space-x-2 transition-all cursor-pointer shadow-md"
               title="Copiar relatório formatado para WhatsApp ou e-mail"
             >
               {copiedNotification ? (
@@ -276,7 +353,7 @@ export function PassagemPlantao() {
 
             <button
               onClick={handleResetData}
-              className="p-2 rounded-xl bg-[#151c2a] hover:bg-[#1e283c] border border-[#243147] text-slate-400 hover:text-slate-200 text-xs transition-all cursor-pointer"
+              className="p-2 rounded-xl bg-[#151c2a]/90 hover:bg-[#1e283c] border border-[#243147] text-slate-400 hover:text-slate-200 text-xs transition-all cursor-pointer shadow-md"
               title="Restaurar dados de demonstração"
             >
               <RotateCcw className="w-4 h-4" />
@@ -300,10 +377,10 @@ export function PassagemPlantao() {
           {/* Total */}
           <button
             onClick={() => setSelectedStatusTab('all')}
-            className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+            className={`p-3 rounded-xl border text-left transition-all cursor-pointer backdrop-blur-md ${
               selectedStatusTab === 'all'
-                ? 'bg-[#1b2536] border-[#c9a265] shadow-sm'
-                : 'bg-[#111722] border-[#1c2433] hover:bg-[#151c2a]'
+                ? 'bg-[#1b2536]/90 border-[#c9a265] shadow-sm'
+                : 'bg-[#111722]/80 border-[#1c2433] hover:bg-[#151c2a]'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -320,10 +397,10 @@ export function PassagemPlantao() {
           {/* Acompanhar */}
           <button
             onClick={() => setSelectedStatusTab('acompanhar')}
-            className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+            className={`p-3 rounded-xl border text-left transition-all cursor-pointer backdrop-blur-md ${
               selectedStatusTab === 'acompanhar'
-                ? 'bg-blue-500/20 border-blue-400 shadow-sm'
-                : 'bg-[#111722] border-[#1c2433] hover:bg-[#151c2a]'
+                ? 'bg-blue-500/25 border-blue-400 shadow-sm'
+                : 'bg-[#111722]/80 border-[#1c2433] hover:bg-[#151c2a]'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -340,10 +417,10 @@ export function PassagemPlantao() {
           {/* Atenção */}
           <button
             onClick={() => setSelectedStatusTab('atenção')}
-            className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+            className={`p-3 rounded-xl border text-left transition-all cursor-pointer backdrop-blur-md ${
               selectedStatusTab === 'atenção'
-                ? 'bg-amber-500/20 border-amber-400 shadow-sm'
-                : 'bg-[#111722] border-[#1c2433] hover:bg-[#151c2a]'
+                ? 'bg-amber-500/25 border-amber-400 shadow-sm'
+                : 'bg-[#111722]/80 border-[#1c2433] hover:bg-[#151c2a]'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -360,10 +437,10 @@ export function PassagemPlantao() {
           {/* Registrado no Grid */}
           <button
             onClick={() => setSelectedStatusTab('registrado no grid')}
-            className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+            className={`p-3 rounded-xl border text-left transition-all cursor-pointer backdrop-blur-md ${
               selectedStatusTab === 'registrado no grid'
-                ? 'bg-purple-500/20 border-purple-400 shadow-sm'
-                : 'bg-[#111722] border-[#1c2433] hover:bg-[#151c2a]'
+                ? 'bg-purple-500/25 border-purple-400 shadow-sm'
+                : 'bg-[#111722]/80 border-[#1c2433] hover:bg-[#151c2a]'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -380,10 +457,10 @@ export function PassagemPlantao() {
           {/* Para Conhecimento */}
           <button
             onClick={() => setSelectedStatusTab('para conhecimento')}
-            className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+            className={`p-3 rounded-xl border text-left transition-all cursor-pointer backdrop-blur-md ${
               selectedStatusTab === 'para conhecimento'
-                ? 'bg-slate-500/20 border-slate-300 shadow-sm'
-                : 'bg-[#111722] border-[#1c2433] hover:bg-[#151c2a]'
+                ? 'bg-slate-500/25 border-slate-300 shadow-sm'
+                : 'bg-[#111722]/80 border-[#1c2433] hover:bg-[#151c2a]'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -400,10 +477,10 @@ export function PassagemPlantao() {
           {/* Resolvido */}
           <button
             onClick={() => setSelectedStatusTab('resolvido')}
-            className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+            className={`p-3 rounded-xl border text-left transition-all cursor-pointer backdrop-blur-md ${
               selectedStatusTab === 'resolvido'
-                ? 'bg-emerald-500/20 border-emerald-400 shadow-sm'
-                : 'bg-[#111722] border-[#1c2433] hover:bg-[#151c2a]'
+                ? 'bg-emerald-500/25 border-emerald-400 shadow-sm'
+                : 'bg-[#111722]/80 border-[#1c2433] hover:bg-[#151c2a]'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -420,7 +497,11 @@ export function PassagemPlantao() {
       </div>
 
       {/* 3. SEARCH & QUICK FILTER TOOLBAR */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#0f141f] border border-[#1e2738] rounded-xl p-3 shadow-md">
+      <div
+        className={`flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#0c1017]/90 border border-[#1e2738]/90 rounded-xl p-3 shadow-xl backdrop-blur-xl transition-all duration-500 ${
+          hideContent ? 'opacity-0 scale-95 pointer-events-none -translate-y-4' : ''
+        }`}
+      >
         {/* Search input */}
         <div className="relative flex-1 w-full sm:w-auto">
           <Search className="w-4 h-4 text-[#c9a265] absolute left-3 top-2.5 pointer-events-none" />
@@ -429,7 +510,7 @@ export function PassagemPlantao() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Pesquisar por placa, transportadora, condutor, eventualidade ou texto da ocorrência..."
-            className="w-full pl-9 pr-4 py-2 bg-[#121824] border border-[#232f45] focus:border-[#c9a265] rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none transition-all"
+            className="w-full pl-9 pr-4 py-2 bg-[#121824]/90 border border-[#232f45] focus:border-[#c9a265] rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none transition-all"
           />
         </div>
 
@@ -442,12 +523,16 @@ export function PassagemPlantao() {
       </div>
 
       {/* 4. MAIN PASSAGEM DE PLANTÃO TABLE (MATCHING THE ATTACHED IMAGE) */}
-      <div className="bg-[#0f141f] border border-[#243147] rounded-2xl shadow-2xl overflow-hidden">
+      <div
+        className={`bg-[#0c1017]/90 border border-[#243147]/90 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden transition-all duration-500 ${
+          hideContent ? 'opacity-0 scale-95 pointer-events-none -translate-y-4' : ''
+        }`}
+      >
         <div className="overflow-x-auto custom-scroll">
           <table className="w-full text-left border-collapse min-w-[1050px]">
             {/* Table Header matching the Blue-Steel tone from user's attached image */}
             <thead>
-              <tr className="bg-[#2d435f] text-slate-100 border-b border-[#1c2c42] select-none text-center">
+              <tr className="bg-[#2d435f]/95 backdrop-blur-md text-slate-100 border-b border-[#1c2c42] select-none text-center">
                 {/* 1. Observação */}
                 <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider w-[20%] border-r border-[#3e5677] text-white">
                   Observação
@@ -471,7 +556,7 @@ export function PassagemPlantao() {
             </thead>
 
             {/* Table Body */}
-            <tbody className="divide-y divide-[#1e2738] bg-[#0c1017]">
+            <tbody className="divide-y divide-[#1e2738]/80 bg-[#0c1017]/80 backdrop-blur-md">
               {filteredItems.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="py-12 text-center text-slate-400">
@@ -493,12 +578,12 @@ export function PassagemPlantao() {
                   return (
                     <tr
                       key={item.id}
-                      className={`hover:bg-[#121824] transition-colors group align-top ${
-                        index % 2 === 0 ? 'bg-[#0c1017]' : 'bg-[#0f141e]'
+                      className={`hover:bg-[#141c2b]/90 transition-colors group align-top ${
+                        index % 2 === 0 ? 'bg-[#0c1017]/80' : 'bg-[#0f141e]/80'
                       }`}
                     >
                       {/* COLUNA 1: OBSERVAÇÃO */}
-                      <td className="p-4 text-xs text-slate-300 border-r border-[#1a2333] relative">
+                      <td className="p-4 text-xs text-slate-300 border-r border-[#1a2333]/80 relative">
                         <div className="space-y-2">
                           {item.observacao ? (
                             <p className="text-xs text-slate-200 leading-relaxed whitespace-pre-line font-sans">
@@ -511,7 +596,7 @@ export function PassagemPlantao() {
                           )}
 
                           {/* Metadata badge (Data & Turno) */}
-                          <div className="pt-2 flex flex-col space-y-1 text-[10px] text-slate-400 border-t border-[#1b2434]">
+                          <div className="pt-2 flex flex-col space-y-1 text-[10px] text-slate-400 border-t border-[#1b2434]/80">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-3 h-3 text-[#c9a265]" />
                               {item.dataRegistro} às {item.horaRegistro}
@@ -546,7 +631,7 @@ export function PassagemPlantao() {
                       </td>
 
                       {/* COLUNA 2: OCORRÊNCIA (FORMATO EXATO DA IMAGEM) */}
-                      <td className="p-4 text-xs border-r border-[#1a2333]">
+                      <td className="p-4 text-xs border-r border-[#1a2333]/80">
                         <div className="space-y-2 text-center sm:text-left">
                           {/* Header block with Unidade, Placa, Eventualidade */}
                           <div className="text-center space-y-1 font-sans">
@@ -584,7 +669,7 @@ export function PassagemPlantao() {
                       </td>
 
                       {/* COLUNA 3: ATUALIZAÇÃO / RETORNO (FORMATO EXATO DA IMAGEM) */}
-                      <td className="p-4 text-xs border-r border-[#1a2333]">
+                      <td className="p-4 text-xs border-r border-[#1a2333]/80">
                         <div className="space-y-2">
                           <div className="text-center font-bold text-slate-300 text-xs tracking-wide">
                             Atualização:
@@ -690,10 +775,10 @@ export function PassagemPlantao() {
         </div>
 
         {/* Table Footer Bar */}
-        <div className="p-3.5 bg-[#0e131d] border-t border-[#1e2738] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+        <div className="p-3.5 bg-[#0e131d]/90 border-t border-[#1e2738]/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
           <div className="flex items-center space-x-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Transmissão em tempo real &bull; Livro de Ocorrências CCO</span>
+            <span>Transmissão em tempo real &bull; Livro de Ocorrências CCO 24h &bull; Grupo 3corações</span>
           </div>
 
           <div className="flex items-center space-x-3 text-[11px]">
