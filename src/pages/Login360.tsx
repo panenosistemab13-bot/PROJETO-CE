@@ -10,7 +10,6 @@ import {
   Compass,
   ZoomIn,
   ZoomOut,
-  HelpCircle,
   CheckCircle2,
   AlertTriangle,
   ArrowRight,
@@ -69,7 +68,6 @@ export function Login360({ onLoginSuccess }: Login360Props) {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [activeScene, setActiveScene] = useState<PanoramaScene>(PANORAMA_SCENES[0]);
   const [isAutoRotate, setIsAutoRotate] = useState(true);
-  const [showHelpModal, setShowHelpModal] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
   
   // Wallpaper Only / Immersive 360 Free Exploration Mode
@@ -625,18 +623,9 @@ export function Login360({ onLoginSuccess }: Login360Props) {
 
               {/* Password Input */}
               <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <label className="text-[10.5px] 2xl:text-[11px] font-bold text-slate-300 block">
-                    Senha de Acesso
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowHelpModal(true)}
-                    className="text-[10px] text-[#c9a265] hover:underline cursor-pointer"
-                  >
-                    Esqueceu a senha?
-                  </button>
-                </div>
+                <label className="text-[10.5px] 2xl:text-[11px] font-bold text-slate-300 block">
+                  Senha de Acesso
+                </label>
                 <div className="relative flex items-center">
                   <div className="absolute left-3 text-slate-400 pointer-events-none">
                     <Lock className="w-4 h-4 text-[#c9a265]" />
@@ -693,45 +682,6 @@ export function Login360({ onLoginSuccess }: Login360Props) {
             </form>
           </div>
         </main>
-      )}
-
-      {/* HELP / FORGOT PASSWORD MODAL */}
-      {showHelpModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-md bg-[#0f141d] border border-[#c9a265]/60 rounded-2xl p-6 shadow-2xl relative">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[#241e15] border border-[#c9a265]/50 flex items-center justify-center text-[#c9a265]">
-                <HelpCircle className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-white">Suporte & Recuperação de Acesso</h3>
-                <p className="text-xs text-slate-400">Segurança da Informação CCO</p>
-              </div>
-            </div>
-
-            <div className="space-y-3 text-xs text-slate-300 leading-relaxed mb-6">
-              <p>
-                Para recuperar a sua senha corporativa ou solicitar um novo token de acesso, utilize os dados padrão de homologação:
-              </p>
-              <div className="p-3 rounded-xl bg-[#151b26] border border-[#242d3d] space-y-1 font-mono">
-                <div className="text-slate-400">Usuário Padrão: <span className="text-[#dfbe85] font-bold">crisfialho</span></div>
-                <div className="text-slate-400">Senha Padrão: <span className="text-[#dfbe85] font-bold">123</span></div>
-              </div>
-              <p>
-                Em caso de bloqueio permanente ou dúvidas operacionais, contate a Central de Monitoramento pelo ramal interno <strong>#3420</strong> ou envie mensagem para <strong>seguranca@3coracoes.com.br</strong>.
-              </p>
-            </div>
-
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowHelpModal(false)}
-                className="px-5 py-2 rounded-xl bg-[#c9a265] text-[#140e06] font-bold text-xs hover:opacity-90 transition-opacity cursor-pointer"
-              >
-                Entendido
-              </button>
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );
