@@ -1,0 +1,8 @@
+{
+  "name": "fortaleza ce ",
+  "description": "Painel de controle e monitoramento de segurança premium 4K para o Café Três Corações.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
