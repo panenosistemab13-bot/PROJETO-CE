@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { MenuInicial } from './pages/MenuInicial';
 import { Veiculos } from './pages/Veiculos';
 import { Colaboradores } from './pages/Colaboradores';
+import { PassagemPlantao } from './pages/PassagemPlantao';
 import { Login360 } from './pages/Login360';
 import { Perfil } from './pages/Perfil';
 import { Configuracoes } from './pages/Configuracoes';
@@ -106,6 +107,10 @@ export default function App() {
 
           {activeTab === 'colaboradores' && (
             <Colaboradores />
+          )}
+
+          {activeTab === 'passagem_plantao' && (
+            <PassagemPlantao />
           )}
 
           {activeTab === 'perfil' && (

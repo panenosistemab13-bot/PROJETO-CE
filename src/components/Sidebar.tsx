@@ -3,6 +3,7 @@ import {
   Home,
   Truck,
   Users,
+  ClipboardList,
   ArrowRight,
   Heart,
   ChevronLeft,
@@ -23,6 +24,7 @@ export function Sidebar({ activeTab, setActiveTab, onOpenPromo, isCollapsed, set
     { id: 'menu_inicial', label: 'Menu Inicial', icon: Home },
     { id: 'veiculos', label: 'Veículos', icon: Truck },
     { id: 'colaboradores', label: 'Colaboradores', icon: Users },
+    { id: 'passagem_plantao', label: 'Passagem de Plantão', icon: ClipboardList },
   ];
 
   return (
