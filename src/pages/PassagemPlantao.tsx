@@ -34,7 +34,10 @@ import {
 import {
   PlantaoItem,
   PlantaoStatus,
+  PlantaoOperacao,
   STATUS_CONFIG,
+  OPERACAO_OPTIONS,
+  OPERACAO_CONFIG,
   INITIAL_PLANTAO_ITEMS,
 } from '../data/plantaoData';
 import { PlantaoRecordModal } from '../components/modals/PlantaoRecordModal';
@@ -113,6 +116,7 @@ export function PassagemPlantao() {
       const matchesSearch =
         item.placa.toLowerCase().includes(term) ||
         item.unidadeTransportadora.toLowerCase().includes(term) ||
+        (item.operacao || '').toLowerCase().includes(term) ||
         item.eventualidade.toLowerCase().includes(term) ||
         item.descricaoOcorrencia.toLowerCase().includes(term) ||
         item.observacao.toLowerCase().includes(term) ||
@@ -646,6 +650,21 @@ export function PassagemPlantao() {
                                 {item.placa}
                               </span>
                             </div>
+
+                            {item.operacao && (
+                              <div className="text-xs text-slate-200">
+                                <strong className="text-white font-bold">Operação:</strong>{' '}
+                                <span className={`px-2 py-0.5 rounded-md text-[10.5px] font-bold border inline-block ${
+                                  OPERACAO_CONFIG[item.operacao]?.badgeBg || 'bg-[#182233]'
+                                } ${
+                                  OPERACAO_CONFIG[item.operacao]?.badgeText || 'text-slate-300'
+                                } ${
+                                  OPERACAO_CONFIG[item.operacao]?.badgeBorder || 'border-[#2c3d59]'
+                                }`}>
+                                  {OPERACAO_CONFIG[item.operacao]?.label || item.operacao}
+                                </span>
+                              </div>
+                            )}
 
                             <div className="text-xs text-slate-200">
                               <strong className="text-white font-bold">Eventualidade:</strong>{' '}

@@ -7,6 +7,51 @@ export type PlantaoStatus =
   | 'atenção' 
   | 'registrado no grid';
 
+export type PlantaoOperacao = 
+  | 'transferencia' 
+  | 'dedicado' 
+  | 'distribuição risco' 
+  | 'distribuição geral';
+
+export const OPERACAO_OPTIONS: Array<{ value: PlantaoOperacao; label: string; description: string }> = [
+  { value: 'transferencia', label: 'Transferência', description: 'Transferência entre unidades/CDs' },
+  { value: 'dedicado', label: 'Dedicado', description: 'Operação dedicada exclusiva' },
+  { value: 'distribuição risco', label: 'Distribuição Risco', description: 'Distribuição com gerenciamento de risco elevado' },
+  { value: 'distribuição geral', label: 'Distribuição Geral', description: 'Distribuição geral e entregas regulares' },
+];
+
+export const OPERACAO_CONFIG: Record<PlantaoOperacao, {
+  label: string;
+  badgeBg: string;
+  badgeText: string;
+  badgeBorder: string;
+}> = {
+  'transferencia': {
+    label: 'Transferência',
+    badgeBg: 'bg-cyan-500/15',
+    badgeText: 'text-cyan-400',
+    badgeBorder: 'border-cyan-500/30',
+  },
+  'dedicado': {
+    label: 'Dedicado',
+    badgeBg: 'bg-amber-500/15',
+    badgeText: 'text-amber-400',
+    badgeBorder: 'border-amber-500/30',
+  },
+  'distribuição risco': {
+    label: 'Distribuição Risco',
+    badgeBg: 'bg-rose-500/15',
+    badgeText: 'text-rose-400',
+    badgeBorder: 'border-rose-500/30',
+  },
+  'distribuição geral': {
+    label: 'Distribuição Geral',
+    badgeBg: 'bg-emerald-500/15',
+    badgeText: 'text-emerald-400',
+    badgeBorder: 'border-emerald-500/30',
+  },
+};
+
 export interface PlantaoItem {
   id: string;
   dataRegistro: string;
@@ -18,6 +63,7 @@ export interface PlantaoItem {
   // Coluna Ocorrência
   unidadeTransportadora: string;
   placa: string;
+  operacao?: PlantaoOperacao;
   eventualidade: string;
   descricaoOcorrencia: string;
   
@@ -98,6 +144,7 @@ export const INITIAL_PLANTAO_ITEMS: PlantaoItem[] = [
     observacao: 'Acompanhamento prioritário de substituição de cavalo mecânico na rota Ceará - Paraíba.',
     unidadeTransportadora: 'Ledifran',
     placa: 'RUC3E30',
+    operacao: 'transferencia',
     eventualidade: 'Problema mecânico | troca de cavalo',
     descricaoOcorrencia: 'Em acompanhamento à ocorrência do veículo conduzido pelo Sr. Anderson (WhatsApp: 11 97138-7264), informamos que o condutor relatou que o veículo está com problema no diferencial. Foi realizada uma manutenção emergencial no local, porém o veículo ainda precisa ser direcionado a uma oficina e aguarda autorização da central.\n\nParalelamente, em contato via WhatsApp (24) 9699-2041 com a transportadora para validação do plano de contingência.',
     atualizacao: {
@@ -124,6 +171,7 @@ export const INITIAL_PLANTAO_ITEMS: PlantaoItem[] = [
     observacao: 'Verificação de desvio de rota programada na BR-116.',
     unidadeTransportadora: '3C EUSEBIO',
     placa: 'SBJ8C85',
+    operacao: 'dedicado',
     eventualidade: 'Desvio de rota em trecho rodoviário',
     descricaoOcorrencia: 'Veículo da frota própria 3C apresentou saída de rota na altura de Horizonte/CE. Condutor relatou bloqueio por obras do DNER e necessidade de desvio autorizado pela concessionária.',
     atualizacao: {
@@ -141,6 +189,7 @@ export const INITIAL_PLANTAO_ITEMS: PlantaoItem[] = [
     observacao: 'Sensor de porta traseira apresentando oscilação na saída do CD.',
     unidadeTransportadora: 'ARGUS LOGISTICA E TRANSPORTES LTDA',
     placa: 'KQT5I92',
+    operacao: 'distribuição risco',
     eventualidade: 'Alarme de violação de sensor / bau',
     descricaoOcorrencia: 'Disparo intermitente do sensor de abertura de porta baú durante deslocamento urbano em Fortaleza. CCO solicitou parada em posto seguro credenciado para averiguação física dos lacres.',
     atualizacao: {
@@ -158,6 +207,7 @@ export const INITIAL_PLANTAO_ITEMS: PlantaoItem[] = [
     observacao: 'Atualização das novas diretrizes de segurança da Sede João Lima.',
     unidadeTransportadora: 'CCO CENTRAL 3 CORAÇÕES',
     placa: 'SBT0C92',
+    operacao: 'distribuição geral',
     eventualidade: 'Informativo operacional / Troca de chaves de armazém',
     descricaoOcorrencia: 'Concluído o inventário matinal dos lacres eletrônicos e chaves de custódia do CCO. Todas as 14 chaves operacionais e 10 rádios HT conferidos no cofre seguro.',
     atualizacao: {
@@ -175,6 +225,7 @@ export const INITIAL_PLANTAO_ITEMS: PlantaoItem[] = [
     observacao: 'Lançamento de viagem e espelhamento Omnilink concluído.',
     unidadeTransportadora: 'JETTA TRANSPORTES E LOGISTICA LTDA',
     placa: 'DVS5J65',
+    operacao: 'transferencia',
     eventualidade: 'Cadastro de SM e Espelhamento Grid',
     descricaoOcorrencia: 'Solicitação de Monitoramento (SM Nº 449201) para carregamento de café gourmet com destino ao Rio de Janeiro. Todos os testes de macro e atuadores aprovados.',
     atualizacao: {
