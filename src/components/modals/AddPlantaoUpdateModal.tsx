@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, CheckCircle2, PlusCircle } from 'lucide-react';
+import { X, CheckCircle2, PlusCircle, Calendar, User } from 'lucide-react';
 import { PlantaoItem, PlantaoStatus, STATUS_CONFIG } from '../../data/plantaoData';
 import { VehiclePlateSelect } from '../VehiclePlateSelect';
 
@@ -86,6 +86,21 @@ export function AddPlantaoUpdateModal({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} id="update-modal-form" className="p-4 sm:p-5 space-y-3.5 bg-[#0c1017] overflow-y-auto custom-scroll flex-1">
+          {/* Record Metadata summary with prominent date and user */}
+          <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-[#121926] border border-[#232f45] text-xs">
+            <div className="flex items-center space-x-1.5">
+              <Calendar className="w-3.5 h-3.5 text-[#dfbe85]" />
+              <span className="text-[10.5px] font-extrabold uppercase text-slate-400">Data:</span>
+              <span className="font-mono font-bold text-white">{record.dataRegistro}</span>
+              <span className="text-[#dfbe85] font-semibold">às {record.horaRegistro}</span>
+            </div>
+            <div className="flex items-center space-x-1.5">
+              <User className="w-3.5 h-3.5 text-[#c9a265]" />
+              <span className="text-[10.5px] font-extrabold uppercase text-slate-400">Usuário:</span>
+              <span className="font-bold text-[#fce8c3]">{record.operador}</span>
+            </div>
+          </div>
+
           {/* Status updater */}
           <div>
             <label className="text-[11px] font-bold text-[#dfbe85] uppercase tracking-wider block mb-1.5">

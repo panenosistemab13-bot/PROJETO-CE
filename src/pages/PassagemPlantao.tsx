@@ -661,13 +661,33 @@ export function PassagemPlantao() {
                         <ChevronDown className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
                       </div>
 
-                      {/* Date & User */}
-                      <div className="hidden lg:flex flex-col text-right text-[10.5px] text-slate-400 leading-tight">
-                        <span className="flex items-center justify-end gap-1 text-slate-300">
-                          <Calendar className="w-3 h-3 text-[#c9a265]" />
-                          {item.dataRegistro} às {item.horaRegistro}
-                        </span>
-                        <span className="text-slate-500">{item.operador}</span>
+                      {/* Date & User - High Prominence Executive Badge */}
+                      <div className="flex items-center space-x-2 bg-[#121926] border border-[#2b3c54] px-3 py-1.5 rounded-xl shadow-md">
+                        <div className="flex flex-col text-right leading-tight space-y-0.5">
+                          {/* Data e Hora */}
+                          <div className="flex items-center justify-end space-x-1.5">
+                            <Calendar className="w-3.5 h-3.5 text-[#dfbe85]" />
+                            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">
+                              Data:
+                            </span>
+                            <span className="font-mono font-bold text-white text-xs">
+                              {item.dataRegistro}
+                            </span>
+                            <span className="text-xs font-bold text-[#dfbe85]">
+                              às {item.horaRegistro}
+                            </span>
+                          </div>
+                          {/* Nome do Usuário */}
+                          <div className="flex items-center justify-end space-x-1.5">
+                            <User className="w-3.5 h-3.5 text-[#c9a265]" />
+                            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">
+                              Usuário:
+                            </span>
+                            <span className="text-xs font-bold text-[#fce8c3] drop-shadow-sm">
+                              {item.operador}
+                            </span>
+                          </div>
+                        </div>
                       </div>
 
                       {/* Quick Action Buttons */}
@@ -724,10 +744,26 @@ export function PassagemPlantao() {
                         )}
                       </div>
 
-                      {/* Mobile timestamp / details */}
-                      <div className="pt-2 mt-2 border-t border-[#1a2333] flex lg:hidden items-center justify-between text-[10px] text-slate-400">
-                        <span>{item.dataRegistro} às {item.horaRegistro}</span>
-                        <span>{item.operador}</span>
+                      {/* Mobile & responsive timestamp / details badge */}
+                      <div className="pt-2 mt-2 border-t border-[#1a2333] flex lg:hidden flex-col space-y-1 bg-[#0c1017] p-2 rounded-lg border border-[#1b2536]">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="flex items-center gap-1 text-[10px] font-extrabold uppercase text-slate-400">
+                            <Calendar className="w-3 h-3 text-[#dfbe85]" />
+                            Data:
+                          </span>
+                          <span className="font-mono font-bold text-white text-xs">
+                            {item.dataRegistro} <span className="text-[#dfbe85]">às {item.horaRegistro}</span>
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs pt-1 border-t border-[#161f2c]">
+                          <span className="flex items-center gap-1 text-[10px] font-extrabold uppercase text-slate-400">
+                            <User className="w-3 h-3 text-[#c9a265]" />
+                            Usuário:
+                          </span>
+                          <span className="font-bold text-[#fce8c3] text-xs">
+                            {item.operador}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -883,12 +919,26 @@ export function PassagemPlantao() {
                               </span>
                             )}
 
-                            <div className="pt-2 flex flex-col space-y-1 text-[10px] text-slate-400 border-t border-[#1b2434]/80">
-                              <span className="flex items-center gap-1 text-slate-300">
-                                <Calendar className="w-3 h-3 text-[#c9a265]" />
-                                {item.dataRegistro} às {item.horaRegistro}
-                              </span>
-                              <span className="text-slate-400">{item.operador}</span>
+                            {/* Prominent High-Contrast Date & Operator Block */}
+                            <div className="pt-2 mt-2 flex flex-col space-y-1 bg-[#101724] border border-[#24334a] p-2 rounded-lg text-xs">
+                              <div className="flex items-center justify-between">
+                                <span className="flex items-center gap-1 text-[10px] uppercase font-extrabold text-slate-300">
+                                  <Calendar className="w-3 h-3 text-[#dfbe85]" />
+                                  Data:
+                                </span>
+                                <span className="font-mono font-bold text-white text-[11px]">
+                                  {item.dataRegistro} <span className="text-[#dfbe85]">às {item.horaRegistro}</span>
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between pt-1 border-t border-[#1a2538]">
+                                <span className="flex items-center gap-1 text-[10px] uppercase font-extrabold text-slate-300">
+                                  <User className="w-3 h-3 text-[#c9a265]" />
+                                  Usuário:
+                                </span>
+                                <span className="font-bold text-[#fce8c3] text-[11px]">
+                                  {item.operador}
+                                </span>
+                              </div>
                             </div>
 
                             <div className="pt-1 flex items-center space-x-1.5 opacity-70 group-hover:opacity-100 transition-opacity">

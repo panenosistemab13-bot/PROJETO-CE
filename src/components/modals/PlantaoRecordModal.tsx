@@ -9,6 +9,8 @@ import {
   CheckCircle2,
   ArrowRightLeft,
   User,
+  Calendar,
+  Clock,
   ZoomIn,
   ZoomOut,
   RotateCcw,
@@ -63,6 +65,11 @@ export function PlantaoRecordModal({
   // Status
   const [status, setStatus] = useState<PlantaoStatus>('acompanhar');
 
+  // Identificação: Data, Hora e Operador
+  const [dataRegistro, setDataRegistro] = useState('');
+  const [horaRegistro, setHoraRegistro] = useState('');
+  const [operador, setOperador] = useState('Cristiane Fialho');
+
   // Zoom scale state (default 85% for compact, perfectly centered fit without any clipping)
   const [modalZoom, setModalZoom] = useState<number>(0.85);
 
@@ -81,7 +88,11 @@ export function PlantaoRecordModal({
       setDescricaoRetorno(editingRecord.atualizacao?.descricaoRetorno || '');
 
       setStatus(editingRecord.status || 'acompanhar');
+      setDataRegistro(editingRecord.dataRegistro || '');
+      setHoraRegistro(editingRecord.horaRegistro || '');
+      setOperador(editingRecord.operador || 'Cristiane Fialho');
     } else {
+      const now = new Date();
       // Reset defaults
       setObservacao('');
       setUnidadeTransportadora('');
@@ -94,6 +105,9 @@ export function PlantaoRecordModal({
       setCondutorSubstituto('');
       setDescricaoRetorno('');
       setStatus('acompanhar');
+      setDataRegistro(now.toLocaleDateString('pt-BR'));
+      setHoraRegistro(now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
+      setOperador('Cristiane Fialho');
     }
   }, [editingRecord, isOpen]);
 
@@ -118,15 +132,16 @@ export function PlantaoRecordModal({
     }
 
     const now = new Date();
-    const dateStr = editingRecord?.dataRegistro || now.toLocaleDateString('pt-BR');
-    const timeStr = editingRecord?.horaRegistro || now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = dataRegistro.trim() || now.toLocaleDateString('pt-BR');
+    const timeStr = horaRegistro.trim() || now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const opStr = operador.trim() || 'Cristiane Fialho';
 
     const updatedRecord: PlantaoItem = {
       id: editingRecord ? editingRecord.id : `plantao-${Date.now()}`,
       dataRegistro: dateStr,
       horaRegistro: timeStr,
       turno: editingRecord?.turno || 'Turno A (06:00 - 18:00)',
-      operador: editingRecord?.operador || 'Operador CCO',
+      operador: opStr,
       observacao: observacao.trim(),
       unidadeTransportadora: unidadeTransportadora.trim() || 'Logística 3C',
       placa: placa.toUpperCase().trim(),
@@ -241,6 +256,70 @@ export function PlantaoRecordModal({
                   </button>
                 );
               })}
+            </div>
+          </div>
+
+          {/* High Prominence: Operador Responsável e Data/Hora */}
+          <div className="p-3 sm:p-3.5 rounded-xl bg-gradient-to-r from-[#141b27] via-[#101724] to-[#141b27] border border-[#2b3c58] shadow-md space-y-2">
+            <div className="flex items-center justify-between pb-1.5 border-b border-[#223046]">
+              <div className="flex items-center space-x-1.5 text-xs font-bold text-[#dfbe85] uppercase tracking-wider">
+                <User className="w-3.5 h-3.5 text-[#c9a265]" />
+                <span>Identificação do Operador & Data/Hora</span>
+              </div>
+              <span className="text-[10px] text-slate-400">CCO 3corações</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-0.5">
+              {/* Operador / Usuário */}
+              <div>
+                <label className="text-[10.5px] font-bold text-slate-300 block mb-1">
+                  Nome do Operador / Usuário *
+                </label>
+                <div className="relative">
+                  <User className="w-3.5 h-3.5 text-[#c9a265] absolute left-2.5 top-2.5 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={operador}
+                    onChange={(e) => setOperador(e.target.value)}
+                    placeholder="Ex: Cristiane Fialho, Robson..."
+                    className="w-full pl-8 pr-3 py-1.5 bg-[#0b0f17] border border-[#232f45] focus:border-[#c9a265] rounded-xl text-xs font-semibold text-[#fce8c3] placeholder-slate-500 focus:outline-none transition-all shadow-inner"
+                  />
+                </div>
+              </div>
+
+              {/* Data do Registro */}
+              <div>
+                <label className="text-[10.5px] font-bold text-slate-300 block mb-1">
+                  Data do Registro
+                </label>
+                <div className="relative">
+                  <Calendar className="w-3.5 h-3.5 text-[#dfbe85] absolute left-2.5 top-2.5 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={dataRegistro}
+                    onChange={(e) => setDataRegistro(e.target.value)}
+                    placeholder="DD/MM/AAAA"
+                    className="w-full pl-8 pr-3 py-1.5 bg-[#0b0f17] border border-[#232f45] focus:border-[#c9a265] rounded-xl text-xs font-mono font-bold text-white placeholder-slate-500 focus:outline-none transition-all shadow-inner"
+                  />
+                </div>
+              </div>
+
+              {/* Hora do Registro */}
+              <div>
+                <label className="text-[10.5px] font-bold text-slate-300 block mb-1">
+                  Horário
+                </label>
+                <div className="relative">
+                  <Clock className="w-3.5 h-3.5 text-[#dfbe85] absolute left-2.5 top-2.5 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={horaRegistro}
+                    onChange={(e) => setHoraRegistro(e.target.value)}
+                    placeholder="HH:MM"
+                    className="w-full pl-8 pr-3 py-1.5 bg-[#0b0f17] border border-[#232f45] focus:border-[#c9a265] rounded-xl text-xs font-mono font-bold text-[#dfbe85] placeholder-slate-500 focus:outline-none transition-all shadow-inner"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
