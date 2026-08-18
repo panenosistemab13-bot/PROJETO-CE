@@ -8,6 +8,8 @@ import {
   Heart,
   ChevronLeft,
   ChevronRight,
+  Coffee,
+  Sparkles,
 } from 'lucide-react';
 import medallionImg from '../assets/images/medallion_dark_3c_1786935069743.jpg';
 
@@ -22,9 +24,10 @@ interface SidebarProps {
 export function Sidebar({ activeTab, setActiveTab, onOpenPromo, isCollapsed, setIsCollapsed }: SidebarProps) {
   const navItems = [
     { id: 'menu_inicial', label: 'Menu Inicial', icon: Home },
+    { id: 'passagem_plantao', label: 'Passagem de Plantão', icon: Coffee, badge: '3D 360°' },
+    { id: 'ocorrencias', label: 'Ocorrências', icon: ClipboardList },
     { id: 'veiculos', label: 'Veículos', icon: Truck },
     { id: 'colaboradores', label: 'Colaboradores', icon: Users },
-    { id: 'ocorrencias', label: 'Ocorrências', icon: ClipboardList },
   ];
 
   return (
@@ -109,9 +112,18 @@ export function Sidebar({ activeTab, setActiveTab, onOpenPromo, isCollapsed, set
                   }`}
                 />
                 {!isCollapsed && (
-                  <span className="truncate text-left text-[11.5px] 2xl:text-[12.5px] animate-fade-in">
-                    {item.label}
-                  </span>
+                  <div className="flex items-center justify-between flex-1 overflow-hidden">
+                    <span className="truncate text-left text-[11.5px] 2xl:text-[12.5px] animate-fade-in">
+                      {item.label}
+                    </span>
+                    {item.badge && (
+                      <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full font-mono uppercase ml-1 flex-shrink-0 ${
+                        isActive ? 'bg-black/20 text-[#140e06]' : 'bg-[#c9a265]/20 text-[#dfbe85] border border-[#c9a265]/40'
+                      }`}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
                 )}
               </button>
             );

@@ -5,6 +5,7 @@ import { MenuInicial } from './pages/MenuInicial';
 import { Veiculos } from './pages/Veiculos';
 import { Colaboradores } from './pages/Colaboradores';
 import { PassagemPlantao } from './pages/PassagemPlantao';
+import { Ocorrencias } from './pages/Ocorrencias';
 import { Login360 } from './pages/Login360';
 import { Perfil } from './pages/Perfil';
 import { Configuracoes } from './pages/Configuracoes';
@@ -109,8 +110,12 @@ export default function App() {
             <Colaboradores />
           )}
 
-          {(activeTab === 'ocorrencias' || activeTab === 'passagem_plantao') && (
+          {activeTab === 'passagem_plantao' && (
             <PassagemPlantao />
+          )}
+
+          {activeTab === 'ocorrencias' && (
+            <Ocorrencias />
           )}
 
           {activeTab === 'perfil' && (
