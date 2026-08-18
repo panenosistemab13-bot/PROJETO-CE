@@ -22,15 +22,28 @@ import {
   SlidersHorizontal,
   Flame,
   Award,
+  Image as ImageIcon,
+  Check,
+  Truck,
+  Sparkle,
 } from 'lucide-react';
 
 import { PlantaoUser, PlantaoFolderItem, FuncaoType, TurnoType, PeriodoType } from '../types/plantao3d';
 import { INITIAL_PLANTAO_USERS, INITIAL_PLANTAO_ITEMS } from '../data/initialPlantaoUsers';
-import { FestivalCafe360Viewer } from '../components/plantao3d/FestivalCafe360Viewer';
+import {
+  FestivalCafe360Viewer,
+  WALLPAPERS_360_THEMES,
+  Wallpaper360Theme,
+} from '../components/plantao3d/FestivalCafe360Viewer';
 import { UserFolderCard } from '../components/plantao3d/UserFolderCard';
 import { FolderDetailModal } from '../components/plantao3d/FolderDetailModal';
 import { UserManagementModal } from '../components/plantao3d/UserManagementModal';
 import { AddFolderItemModal } from '../components/plantao3d/AddFolderItemModal';
+
+import iconFolder3d from '../assets/images/icon_folder_3d_1787015156529.jpg';
+import iconCoffee3d from '../assets/images/icon_coffee_3d_1787015165985.jpg';
+import iconBadge3d from '../assets/images/icon_badge_3d_1787015174678.jpg';
+import iconTruck3d from '../assets/images/icon_truck_3d_1787015195876.jpg';
 
 export function PassagemPlantao() {
   // 1. Persistent Users & Folder Items state
@@ -64,8 +77,23 @@ export function PassagemPlantao() {
     return saved || 'user-cristiane-fialho';
   });
 
-  // View Mode: 'mural3d' | '360full' | 'grid'
-  const [viewMode, setViewMode] = useState<'mural3d' | 'grid' | '360panorama'>('mural3d');
+  // 3. Active 360 Theme / Wallpaper in 4K
+  const [activeWallpaperTheme, setActiveWallpaperTheme] = useState<Wallpaper360Theme>(() => {
+    const savedId = localStorage.getItem('plantao_wallpaper_360_id');
+    if (savedId) {
+      const found = WALLPAPERS_360_THEMES.find((t) => t.id === savedId);
+      if (found) return found;
+    }
+    return WALLPAPERS_360_THEMES[0];
+  });
+
+  // 4. Immersive Page Background Toggle (projects 360 panorama on full page canvas)
+  const [isImmersivePageBg, setIsImmersivePageBg] = useState<boolean>(() => {
+    return localStorage.getItem('plantao_immersive_bg') === 'true';
+  });
+
+  // View Mode: 'mural3d' | 'grid'
+  const [viewMode, setViewMode] = useState<'mural3d' | 'grid'>('mural3d');
 
   // Filters & Search
   const [searchTerm, setSearchTerm] = useState('');
@@ -96,6 +124,14 @@ export function PassagemPlantao() {
   useEffect(() => {
     localStorage.setItem('plantao_active_user_id', currentActiveUserId);
   }, [currentActiveUserId]);
+
+  useEffect(() => {
+    localStorage.setItem('plantao_wallpaper_360_id', activeWallpaperTheme.id);
+  }, [activeWallpaperTheme]);
+
+  useEffect(() => {
+    localStorage.setItem('plantao_immersive_bg', isImmersivePageBg.toString());
+  }, [isImmersivePageBg]);
 
   const activeUser = useMemo(() => {
     return users.find((u) => u.id === currentActiveUserId) || users[0];
@@ -184,55 +220,89 @@ export function PassagemPlantao() {
     });
   }, [users, searchTerm, filterTurno, filterPeriodo, filterFuncao]);
 
+  // Overall Stats
+  const totalSummaries = items.filter((i) => i.tipo === 'resumo_turno').length;
+  const totalOccurrences = items.filter((i) => i.tipo === 'ocorrencia').length;
+  const totalChecklists = items.filter((i) => i.tipo === 'checklist').length;
+  const totalPoints = items.filter((i) => i.tipo === 'pontuacao').length;
+
   return (
-    <div className="space-y-6 pb-14 animate-fade-in text-slate-200">
-      {/* Top Hero Banner: Passagem de Plantão & Festival 3corações */}
-      <div className="relative rounded-3xl p-6 sm:p-7 bg-gradient-to-r from-[#17130e] via-[#111724] to-[#0c1017] border border-[#c9a265]/40 shadow-2xl overflow-hidden">
-        {/* Background Ambient Glow */}
-        <div className="absolute top-0 right-0 w-96 h-full bg-[radial-gradient(ellipse_at_top_right,rgba(201,162,101,0.2),transparent_70%)] pointer-events-none" />
+    <div className="relative space-y-6 pb-16 animate-fade-in text-slate-200">
+      {/* Immersive 360 Full Page Background Layer when active */}
+      {isImmersivePageBg && (
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+          <img
+            src={activeWallpaperTheme.image}
+            alt="Papel de Parede 360 Fundo"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover scale-110 blur-xl opacity-20 transform -translate-y-6 transition-all duration-700"
+          />
+          <div className="absolute inset-0 bg-[#080c14]/85 backdrop-blur-3xl" />
+        </div>
+      )}
+
+      {/* Top Hero Banner with 3D Icons & 4K Theme Indicator */}
+      <div className="relative z-10 rounded-3xl p-6 sm:p-7 bg-gradient-to-r from-[#19130d] via-[#121825] to-[#0c1018] border-2 border-[#c9a265]/50 shadow-[0_15px_45px_rgba(0,0,0,0.7)] overflow-hidden">
+        {/* Ambient Gold Radial Glow */}
+        <div className="absolute top-0 right-0 w-[500px] h-full bg-[radial-gradient(ellipse_at_top_right,rgba(201,162,101,0.22),transparent_70%)] pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-          {/* Left Title & 3corações Coffee Festival Badge */}
-          <div className="space-y-2">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#c9a265] to-[#8c672b] flex items-center justify-center shadow-lg shadow-[#c9a265]/30 flex-shrink-0">
-                <Coffee className="w-6 h-6 text-[#120e06] stroke-[2.3]" />
+          {/* Left Title & 3D Rendered Icons */}
+          <div className="flex items-center space-x-4">
+            {/* 3D Coffee Cup Icon */}
+            <div className="relative w-16 h-16 rounded-3xl overflow-hidden border-2 border-[#c9a265] shadow-xl shadow-[#c9a265]/30 flex-shrink-0 bg-[#0c1017] group">
+              <img
+                src={iconCoffee3d}
+                alt="Xícara de Café 3D"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            </div>
+
+            <div>
+              <div className="flex items-center flex-wrap gap-2.5">
+                <h1 className="text-2xl 2xl:text-3xl font-bold text-white tracking-tight font-serif">
+                  Passagem de Plantão
+                </h1>
+                <span className="px-3 py-0.5 rounded-full bg-gradient-to-r from-[#dfbe85]/20 to-[#c9a265]/20 border border-[#c9a265]/60 text-[#dfbe85] text-[11px] font-extrabold font-mono uppercase tracking-wider shadow">
+                  Ícones 3D &bull; Papéis de Parede 4K 360°
+                </span>
               </div>
-              <div>
-                <div className="flex items-center space-x-2.5">
-                  <h1 className="text-2xl 2xl:text-3xl font-bold text-white tracking-tight font-serif">
-                    Passagem de Plantão
-                  </h1>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#c9a265]/20 border border-[#c9a265]/50 text-[#dfbe85] text-[10.5px] font-bold font-mono uppercase tracking-wider">
-                    Mural 3D & 360°
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-300 mt-0.5 font-medium">
-                  Pastas Individuais dos Colaboradores &bull; Ambiente Virtual do Festival do Café 3corações em 360°
-                </p>
-              </div>
+              <p className="text-xs sm:text-sm text-slate-300 mt-1 font-medium">
+                Pastas Individuais dos Colaboradores &bull; Ambiente Virtual 360° em Ultra Definição 4K
+              </p>
             </div>
           </div>
 
           {/* Right Action Bar & Operator Identity Selector */}
           <div className="flex flex-wrap items-center gap-3">
-            {/* Active User Switcher Pill */}
-            <div className="flex items-center space-x-2.5 p-2 rounded-2xl bg-[#0a0f18]/90 border border-[#2b3c58] shadow-lg">
-              <div className="flex items-center space-x-2 px-2 py-1 rounded-xl bg-[#141b27] border border-[#232f45]">
-                <User className="w-4 h-4 text-[#c9a265]" />
-                <span className="text-[11px] font-bold text-slate-300">Você está como:</span>
+            {/* Active User Switcher Pill with 3D Badge */}
+            <div className="flex items-center space-x-2.5 p-2 rounded-2xl bg-[#0a0f18]/95 border-2 border-[#2b3c58] shadow-xl">
+              <div className="relative w-7 h-7 rounded-xl overflow-hidden border border-[#c9a265] flex-shrink-0">
+                <img
+                  src={iconBadge3d}
+                  alt="Emblema 3D"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <select
-                value={currentActiveUserId}
-                onChange={(e) => setCurrentActiveUserId(e.target.value)}
-                className="bg-transparent text-xs font-bold text-[#dfbe85] focus:outline-none cursor-pointer pr-3"
-              >
-                {users.map((u) => (
-                  <option key={u.id} value={u.id} className="bg-[#0c1017] text-white">
-                    {u.nome} ({u.funcao} - {u.turno})
-                  </option>
-                ))}
-              </select>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Operador Ativo:
+                </span>
+                <select
+                  value={currentActiveUserId}
+                  onChange={(e) => setCurrentActiveUserId(e.target.value)}
+                  className="bg-transparent text-xs font-bold text-[#dfbe85] focus:outline-none cursor-pointer pr-3 font-serif"
+                >
+                  {users.map((u) => (
+                    <option key={u.id} value={u.id} className="bg-[#0c1017] text-white">
+                      {u.nome} ({u.funcao} - {u.turno})
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {/* Add User / Pasta Button */}
@@ -241,30 +311,97 @@ export function PassagemPlantao() {
                 setEditingUser(null);
                 setIsUserModalOpen(true);
               }}
-              className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#dfbe85] via-[#c9a265] to-[#a37c3f] hover:brightness-110 text-[#140e06] font-bold text-xs flex items-center space-x-2 shadow-lg shadow-[#c9a265]/25 transition-all cursor-pointer active:scale-95"
+              className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#dfbe85] via-[#c9a265] to-[#a37c3f] hover:brightness-110 text-[#140e06] font-bold text-xs flex items-center space-x-2 shadow-xl shadow-[#c9a265]/25 transition-all cursor-pointer active:scale-95"
             >
               <UserPlus className="w-4 h-4 stroke-[2.5]" />
               <span>+ Adicionar Usuário / Pasta</span>
             </button>
           </div>
         </div>
+
+        {/* 3D KPI Metrics Bar */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-5 mt-5 border-t border-[#253347]">
+          <div className="flex items-center space-x-3 p-2.5 rounded-2xl bg-[#0a0f18]/70 border border-[#202d42]">
+            <div className="w-10 h-10 rounded-xl overflow-hidden border border-[#c9a265]/50 flex-shrink-0">
+              <img
+                src={iconFolder3d}
+                alt="Pasta 3D"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white font-mono">{users.length} Pastas</div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase">Mural Coletivo</div>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3 p-2.5 rounded-2xl bg-[#0a0f18]/70 border border-[#202d42]">
+            <div className="w-10 h-10 rounded-xl overflow-hidden border border-amber-500/50 flex-shrink-0">
+              <img
+                src={iconCoffee3d}
+                alt="Resumos 3D"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-amber-300 font-mono">{totalSummaries} Resumos</div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase">Passagens Registradas</div>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3 p-2.5 rounded-2xl bg-[#0a0f18]/70 border border-[#202d42]">
+            <div className="w-10 h-10 rounded-xl overflow-hidden border border-red-500/50 flex-shrink-0">
+              <img
+                src={iconTruck3d}
+                alt="Caminhão 3D"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-red-300 font-mono">{totalOccurrences} Ocorrências</div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase">Em Monitoramento</div>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3 p-2.5 rounded-2xl bg-[#0a0f18]/70 border border-[#202d42]">
+            <div className="w-10 h-10 rounded-xl overflow-hidden border border-emerald-500/50 flex-shrink-0">
+              <img
+                src={iconBadge3d}
+                alt="Emblema 3D"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-emerald-300 font-mono">{totalChecklists} Checklists</div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase">Rotinas Concluídas</div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* 3D 360° Interactive Festival do Café Viewer Canvas */}
-      <div className="space-y-2">
+      {/* 3D 360° Interactive Ultra HD 4K Viewer Canvas */}
+      <div className="relative z-10 space-y-2">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center space-x-2 text-xs font-bold text-[#dfbe85] uppercase tracking-wider">
             <Sparkles className="w-4 h-4 text-[#c9a265]" />
-            <span>Ambiente Virtual 360° &bull; Festival do Café 3corações</span>
+            <span>Ambiente Virtual 360° em 4K &bull; {activeWallpaperTheme.name}</span>
           </div>
           <div className="flex items-center space-x-1.5 text-xs text-slate-400">
             <Move3D className="w-3.5 h-3.5 text-[#dfbe85]" />
-            <span>Interativo: arraste para girar em 360 graus</span>
+            <span>Interativo 3D: arraste com o mouse para girar 360 graus</span>
           </div>
         </div>
 
-        {/* 360 Interactive Component with Three.js */}
+        {/* 360 Interactive WebGL Three.js Component with 4K Texture Support */}
         <FestivalCafe360Viewer
+          activeTheme={activeWallpaperTheme}
+          onChangeTheme={(newTheme) => setActiveWallpaperTheme(newTheme)}
+          isPageBackgroundActive={isImmersivePageBg}
+          onTogglePageBackground={(enabled) => setIsImmersivePageBg(enabled)}
           onSelectHotspot={(hotspot) => {
             if (hotspot === 'mural') {
               const el = document.getElementById('mural-pastas-section');
@@ -274,26 +411,91 @@ export function PassagemPlantao() {
         />
       </div>
 
+      {/* Quick Wallpaper 4K Theme Thumbnails Strip */}
+      <div className="relative z-10 p-4 rounded-3xl bg-[#0f1420]/90 border border-[#232f45] shadow-xl space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <ImageIcon className="w-4 h-4 text-[#dfbe85]" />
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+              Seletor Rápido de Papéis de Parede 4K 360°
+            </h3>
+          </div>
+          <span className="text-[11px] text-slate-400">
+            {WALLPAPERS_360_THEMES.length} cenários disponíveis
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+          {WALLPAPERS_360_THEMES.map((theme) => {
+            const isSelected = activeWallpaperTheme.id === theme.id;
+            return (
+              <button
+                key={theme.id}
+                onClick={() => setActiveWallpaperTheme(theme)}
+                className={`relative rounded-2xl overflow-hidden border-2 transition-all duration-300 cursor-pointer p-1 text-left group ${
+                  isSelected
+                    ? 'border-[#c9a265] bg-[#1a2538] shadow-[0_0_15px_rgba(201,162,101,0.3)] scale-[1.02]'
+                    : 'border-[#223046] bg-[#0c1017] hover:border-[#dfbe85]/60 hover:bg-[#141b28]'
+                }`}
+              >
+                <div className="relative h-16 rounded-xl overflow-hidden">
+                  <img
+                    src={theme.image}
+                    alt={theme.name}
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                  
+                  {isSelected && (
+                    <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded-full bg-[#c9a265] text-[#140e06] text-[8.5px] font-extrabold flex items-center space-x-0.5 shadow">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      <span>4K</span>
+                    </span>
+                  )}
+
+                  <div className="absolute bottom-1 left-1.5 right-1.5">
+                    <p className="text-[10px] font-bold text-white truncate font-serif">
+                      {theme.name}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Section Header: Mural 3D de Pastas */}
-      <div id="mural-pastas-section" className="pt-2 space-y-4">
+      <div id="mural-pastas-section" className="relative z-10 pt-2 space-y-4">
         {/* Controls, View Switcher & Search Bar */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#0f141f] border border-[#1e283b] shadow-xl space-y-4">
+        <div className="p-4 sm:p-5 rounded-3xl bg-[#0f141f]/95 border-2 border-[#1e283b] shadow-xl space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-bold text-white font-serif flex items-center space-x-2">
-                <Folder className="w-5 h-5 text-[#c9a265] fill-[#c9a265]/20" />
-                <span>Mural 3D &bull; Pastas dos Colaboradores</span>
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Pastas individuais vinculadas. Todos os colaboradores podem visualizar o mural completo.
-              </p>
+            <div className="flex items-center space-x-3">
+              {/* 3D Folder Icon for Section */}
+              <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-[#c9a265] shadow flex-shrink-0">
+                <img
+                  src={iconFolder3d}
+                  alt="Pasta 3D"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-white font-serif flex items-center space-x-2">
+                  <span>Mural 3D &bull; Pastas dos Colaboradores</span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Pastas individuais vinculadas. Visualização coletiva com permissões exclusivas do proprietário.
+                </p>
+              </div>
             </div>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center rounded-xl bg-[#141b28] border border-[#232f45] p-1 self-start md:self-auto">
+            <div className="flex items-center rounded-xl bg-[#141b28] border border-[#232f45] p-1 self-start md:self-auto shadow-inner">
               <button
                 onClick={() => setViewMode('mural3d')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer ${
                   viewMode === 'mural3d'
                     ? 'bg-[#c9a265] text-[#140e06] font-bold shadow'
                     : 'text-slate-400 hover:text-white'
@@ -305,7 +507,7 @@ export function PassagemPlantao() {
 
               <button
                 onClick={() => setViewMode('grid')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer ${
                   viewMode === 'grid'
                     ? 'bg-[#c9a265] text-[#140e06] font-bold shadow'
                     : 'text-slate-400 hover:text-white'
@@ -327,7 +529,7 @@ export function PassagemPlantao() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Buscar por colaborador ou função..."
-                className="w-full pl-9 pr-4 py-2 bg-[#090d14] border border-[#232f45] focus:border-[#c9a265] rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none transition-all"
+                className="w-full pl-9 pr-4 py-2 bg-[#090d14] border border-[#232f45] focus:border-[#c9a265] rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none transition-all shadow-inner"
               />
             </div>
 
@@ -378,15 +580,15 @@ export function PassagemPlantao() {
         {/* Active Users Count Summary */}
         <div className="flex items-center justify-between text-xs text-slate-400 px-1">
           <div>
-            Exibindo <span className="font-bold text-white">{filteredUsers.length}</span> pastas de colaboradores
+            Exibindo <span className="font-bold text-white">{filteredUsers.length}</span> pastas 3D de colaboradores
           </div>
-          <div className="text-[11px] text-[#dfbe85] flex items-center space-x-1.5">
+          <div className="text-[11px] text-[#dfbe85] flex items-center space-x-1.5 font-medium">
             <Shield className="w-3.5 h-3.5 text-[#c9a265]" />
             <span>Permissões individuais ativas &bull; Visualização coletiva</span>
           </div>
         </div>
 
-        {/* 3D Mural or Grid Display */}
+        {/* 3D Mural Display */}
         {filteredUsers.length === 0 ? (
           <div className="p-12 text-center rounded-3xl bg-[#0e131d] border border-[#1e283b] space-y-2">
             <Folder className="w-12 h-12 text-slate-600 mx-auto" />
@@ -400,7 +602,7 @@ export function PassagemPlantao() {
                 setFilterPeriodo('all');
                 setFilterFuncao('all');
               }}
-              className="text-[#c9a265] text-xs font-bold hover:underline"
+              className="text-[#c9a265] text-xs font-bold hover:underline cursor-pointer"
             >
               Limpar filtros
             </button>

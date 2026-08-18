@@ -24,8 +24,15 @@ import {
   Tag,
   Truck,
   MapPin,
+  Coffee,
+  Shield,
 } from 'lucide-react';
 import { PlantaoUser, PlantaoFolderItem, ItemTipo } from '../../types/plantao3d';
+
+import iconFolder3d from '../../assets/images/icon_folder_3d_1787015156529.jpg';
+import iconBadge3d from '../../assets/images/icon_badge_3d_1787015174678.jpg';
+import iconCoffee3d from '../../assets/images/icon_coffee_3d_1787015165985.jpg';
+import iconTruck3d from '../../assets/images/icon_truck_3d_1787015195876.jpg';
 
 interface FolderDetailModalProps {
   isOpen: boolean;
@@ -85,14 +92,19 @@ export function FolderDetailModal({
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-4xl rounded-3xl bg-gradient-to-b from-[#151b27] via-[#0f1420] to-[#0a0d14] border border-[#c9a265]/50 shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col max-h-[92vh]">
-        {/* Top Header */}
-        <div className="p-5 border-b border-[#222f44] bg-[#121927]/90 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="relative w-full max-w-4xl rounded-3xl bg-gradient-to-b from-[#151b27] via-[#0f1420] to-[#0a0d14] border-2 border-[#c9a265]/60 shadow-[0_20px_60px_rgba(0,0,0,0.85)] overflow-hidden flex flex-col max-h-[92vh]">
+        {/* Top Header with 3D Folder Icon & Operator Profile */}
+        <div className="p-5 border-b border-[#222f44] bg-[#121927]/95 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center space-x-3.5">
-            <div
-              className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${user.avatarColor} p-0.5 shadow-xl flex items-center justify-center flex-shrink-0 text-white font-serif font-bold text-xl`}
-            >
-              <div className="w-full h-full rounded-[14px] bg-[#0c1017]/40 flex items-center justify-center backdrop-blur-sm border border-white/20">
+            {/* 3D Folder Icon */}
+            <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-[#c9a265] shadow-xl flex-shrink-0 bg-[#080c14]">
+              <img
+                src={iconFolder3d}
+                alt="Pasta 3D"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute top-1 left-1 px-1 rounded text-[9px] font-bold bg-black/70 text-[#dfbe85] border border-[#c9a265]/40 font-mono">
                 {user.avatarInitials}
               </div>
             </div>
@@ -102,7 +114,7 @@ export function FolderDetailModal({
                 <h2 className="text-lg sm:text-xl font-bold text-white font-serif tracking-tight">
                   Pasta de {user.nome}
                 </h2>
-                <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider border ${user.badgeColor}`}>
+                <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider border ${user.badgeColor} shadow`}>
                   {user.funcao}
                 </span>
               </div>
@@ -117,7 +129,7 @@ export function FolderDetailModal({
                   <span>{user.periodo}</span>
                 </span>
                 <span>&bull;</span>
-                <span className="text-slate-400">{userItems.length} registros no turno</span>
+                <span className="text-slate-400 font-mono">{userItems.length} registros no turno</span>
               </div>
             </div>
           </div>
@@ -129,14 +141,14 @@ export function FolderDetailModal({
               className="px-3 py-1.5 rounded-xl bg-[#172030] hover:bg-[#233148] text-slate-200 text-xs font-semibold flex items-center space-x-1.5 border border-[#283950] transition-all cursor-pointer"
               title="Copiar Relatório do Turno"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-[#dfbe85]" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3]" /> : <Copy className="w-3.5 h-3.5 text-[#dfbe85]" />}
               <span>{copied ? 'Copiado!' : 'Copiar Resumo'}</span>
             </button>
 
             {isOwner && (
               <button
                 onClick={() => onAddItem(user)}
-                className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#dfbe85] via-[#c9a265] to-[#a37c3f] hover:brightness-110 text-[#140e06] font-bold text-xs flex items-center space-x-1.5 shadow-md shadow-[#c9a265]/20 transition-all cursor-pointer active:scale-95"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#dfbe85] via-[#c9a265] to-[#a37c3f] hover:brightness-110 text-[#140e06] font-bold text-xs flex items-center space-x-1.5 shadow-lg shadow-[#c9a265]/25 transition-all cursor-pointer active:scale-95"
               >
                 <Plus className="w-4 h-4 stroke-[2.5]" />
                 <span>+ Lançar no Turno</span>
@@ -155,18 +167,18 @@ export function FolderDetailModal({
         {/* Ownership Banner Alert */}
         <div className={`px-5 py-2.5 text-xs flex items-center justify-between border-b ${
           isOwner
-            ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300'
-            : 'bg-amber-950/30 border-amber-500/30 text-amber-300'
+            ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+            : 'bg-amber-950/40 border-amber-500/40 text-amber-300'
         }`}>
           <div className="flex items-center space-x-2">
             {isOwner ? <Unlock className="w-4 h-4 text-emerald-400" /> : <Lock className="w-4 h-4 text-amber-400" />}
-            <span className="font-medium">
+            <span className="font-semibold">
               {isOwner
                 ? 'Você é o proprietário desta pasta: você pode adicionar, editar ou apagar seus registros.'
-                : `Mural Coletivo: Você está visualizando a pasta de ${user.nome} em modo somente leitura.`}
+                : `Mural Coletivo 3D: Você está visualizando a pasta de ${user.nome} em modo somente leitura.`}
             </span>
           </div>
-          <span className="text-[11px] font-mono opacity-80">CCO 3corações</span>
+          <span className="text-[11px] font-mono opacity-90 font-bold text-[#dfbe85]">CCO 3corações</span>
         </div>
 
         {/* Search and Filters inside Folder */}
@@ -194,7 +206,7 @@ export function FolderDetailModal({
               <button
                 key={f.id}
                 onClick={() => setFilterTipo(f.id)}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                className={`px-3 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap cursor-pointer ${
                   filterTipo === f.id
                     ? 'bg-[#c9a265] text-[#140e06] font-bold shadow'
                     : 'bg-[#151c27] text-slate-300 hover:text-white'
@@ -206,7 +218,7 @@ export function FolderDetailModal({
           </div>
         </div>
 
-        {/* Items List in the Folder */}
+        {/* Items List in the Folder with 3D Accents */}
         <div className="p-5 overflow-y-auto custom-scroll flex-1 space-y-3.5 bg-[#090d14]">
           {filteredItems.length === 0 ? (
             <div className="p-12 text-center rounded-2xl bg-[#0e131c] border border-[#1e2838] space-y-2">
@@ -217,7 +229,7 @@ export function FolderDetailModal({
               {isOwner && (
                 <button
                   onClick={() => onAddItem(user)}
-                  className="mt-2 px-4 py-2 rounded-xl bg-[#c9a265] text-[#140e06] text-xs font-bold transition-all"
+                  className="mt-2 px-4 py-2 rounded-xl bg-[#c9a265] text-[#140e06] text-xs font-bold transition-all shadow-md"
                 >
                   + Adicionar Primeiro Registro
                 </button>
@@ -227,20 +239,20 @@ export function FolderDetailModal({
             filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="p-4 rounded-2xl bg-gradient-to-r from-[#121824] to-[#0e131d] border border-[#232f45] hover:border-[#c9a265]/60 transition-all space-y-2.5 shadow-md"
+                className="p-4 rounded-2xl bg-gradient-to-r from-[#121824] to-[#0e131d] border border-[#232f45] hover:border-[#c9a265]/70 transition-all space-y-2.5 shadow-lg"
               >
                 {/* Item Top Row */}
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center space-x-2">
                     <span
-                      className={`px-2 py-0.5 rounded-md text-[10.5px] font-bold uppercase tracking-wider ${
+                      className={`px-2.5 py-0.5 rounded-md text-[10.5px] font-bold uppercase tracking-wider ${
                         item.tipo === 'resumo_turno'
-                          ? 'bg-[#c9a265]/20 text-[#dfbe85] border border-[#c9a265]/40'
+                          ? 'bg-[#c9a265]/20 text-[#dfbe85] border border-[#c9a265]/50'
                           : item.tipo === 'ocorrencia'
-                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50'
                           : item.tipo === 'pontuacao'
-                          ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
-                          : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                          ? 'bg-blue-500/20 text-blue-300 border border-blue-500/50'
+                          : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50'
                       }`}
                     >
                       {item.tipo.replace('_', ' ')}
@@ -249,10 +261,10 @@ export function FolderDetailModal({
                     <span
                       className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${
                         item.prioridade === 'critica'
-                          ? 'bg-red-950/60 text-red-300 border border-red-500/40'
+                          ? 'bg-red-950/70 text-red-300 border border-red-500/50'
                           : item.prioridade === 'importante'
-                          ? 'bg-amber-950/60 text-amber-300 border border-amber-500/40'
-                          : 'bg-slate-800/60 text-slate-300 border border-slate-700'
+                          ? 'bg-amber-950/70 text-amber-300 border border-amber-500/50'
+                          : 'bg-slate-800/70 text-slate-300 border border-slate-700'
                       }`}
                     >
                       {item.prioridade}
@@ -268,17 +280,17 @@ export function FolderDetailModal({
                     <div className="flex items-center space-x-1">
                       <button
                         onClick={() => onEditItem(item)}
-                        className="p-1 rounded-lg bg-[#182232] hover:bg-[#25354e] text-slate-300 hover:text-white transition-all cursor-pointer"
+                        className="p-1.5 rounded-lg bg-[#182232] hover:bg-[#25354e] text-slate-300 hover:text-white transition-all cursor-pointer"
                         title="Editar Lançamento"
                       >
-                        <Edit2 className="w-3 h-3" />
+                        <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => onDeleteItem(item.id)}
-                        className="p-1 rounded-lg bg-[#182232] hover:bg-rose-950 text-slate-300 hover:text-rose-300 transition-all cursor-pointer"
+                        className="p-1.5 rounded-lg bg-[#182232] hover:bg-rose-950 text-slate-300 hover:text-rose-300 transition-all cursor-pointer"
                         title="Excluir Lançamento"
                       >
-                        <Trash2 className="w-3 h-3" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   )}
@@ -294,24 +306,31 @@ export function FolderDetailModal({
                   </p>
                 </div>
 
-                {/* Vehicle and Location Badge */}
+                {/* Vehicle and Location Badge with 3D Truck Icon */}
                 {(item.veiculoPlaca || item.motorista || item.local) && (
                   <div className="flex items-center flex-wrap gap-2 pt-1 text-[11px] text-slate-300">
                     {item.veiculoPlaca && (
-                      <span className="px-2 py-0.5 rounded-lg bg-[#080c12] border border-[#212c3f] font-mono font-bold text-white flex items-center space-x-1">
-                        <Truck className="w-3 h-3 text-[#c9a265]" />
+                      <span className="px-2.5 py-1 rounded-lg bg-[#080c12] border border-[#263750] font-mono font-bold text-white flex items-center space-x-1.5 shadow">
+                        <div className="w-4 h-4 rounded overflow-hidden flex-shrink-0">
+                          <img
+                            src={iconTruck3d}
+                            alt="Caminhão 3D"
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                         <span>{item.veiculoPlaca}</span>
                       </span>
                     )}
                     {item.motorista && (
-                      <span className="px-2 py-0.5 rounded-lg bg-[#080c12] border border-[#212c3f] flex items-center space-x-1">
-                        <User className="w-3 h-3 text-slate-400" />
+                      <span className="px-2.5 py-1 rounded-lg bg-[#080c12] border border-[#212c3f] flex items-center space-x-1.5">
+                        <User className="w-3.5 h-3.5 text-slate-400" />
                         <span>{item.motorista}</span>
                       </span>
                     )}
                     {item.local && (
-                      <span className="px-2 py-0.5 rounded-lg bg-[#080c12] border border-[#212c3f] flex items-center space-x-1 text-[#dfbe85]">
-                        <MapPin className="w-3 h-3 text-[#c9a265]" />
+                      <span className="px-2.5 py-1 rounded-lg bg-[#080c12] border border-[#212c3f] flex items-center space-x-1.5 text-[#dfbe85]">
+                        <MapPin className="w-3.5 h-3.5 text-[#c9a265]" />
                         <span>{item.local}</span>
                       </span>
                     )}
@@ -320,9 +339,10 @@ export function FolderDetailModal({
 
                 {/* Checklists items if any */}
                 {item.checklistItems && item.checklistItems.length > 0 && (
-                  <div className="p-2.5 rounded-xl bg-[#080c12] border border-[#1d2738] space-y-1">
-                    <div className="text-[10px] font-bold uppercase text-[#dfbe85] tracking-wider mb-1">
-                      Checklist do Turno:
+                  <div className="p-3 rounded-xl bg-[#080c12] border border-[#1d2738] space-y-1.5">
+                    <div className="text-[10px] font-bold uppercase text-[#dfbe85] tracking-wider mb-1 flex items-center space-x-1">
+                      <CheckSquare className="w-3 h-3" />
+                      <span>Checklist Operacional do Turno:</span>
                     </div>
                     {item.checklistItems.map((chk) => (
                       <label
@@ -338,7 +358,7 @@ export function FolderDetailModal({
                           onChange={() => onToggleChecklist(item.id, chk.id)}
                           className="rounded border-[#2b3c58] text-[#c9a265] focus:ring-0 cursor-pointer"
                         />
-                        <span className={chk.concluido ? 'line-through text-slate-500' : 'text-slate-200'}>
+                        <span className={chk.concluido ? 'line-through text-slate-500 font-medium' : 'text-slate-200 font-medium'}>
                           {chk.texto}
                         </span>
                       </label>
@@ -352,7 +372,7 @@ export function FolderDetailModal({
                     {item.tags.map((t) => (
                       <span
                         key={t}
-                        className="px-2 py-0.5 rounded-md bg-[#182335] text-[#dfbe85] text-[10px] font-semibold"
+                        className="px-2 py-0.5 rounded-md bg-[#182335] text-[#dfbe85] text-[10px] font-semibold border border-[#2b3c58]"
                       >
                         #{t}
                       </span>
@@ -367,12 +387,12 @@ export function FolderDetailModal({
         {/* Footer */}
         <div className="p-4 border-t border-[#222f44] bg-[#101622] flex items-center justify-between text-xs text-slate-400">
           <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
             <span>Sincronizado em tempo real com o CCO 3corações</span>
           </div>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-[#1a2332] hover:bg-[#253248] text-white font-semibold transition-all cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-[#1a2332] hover:bg-[#253248] text-white font-semibold transition-all cursor-pointer"
           >
             Fechar Pasta
           </button>
