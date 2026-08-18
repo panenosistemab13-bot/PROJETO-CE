@@ -87,10 +87,7 @@ export function PassagemPlantao() {
     return WALLPAPERS_360_THEMES[0];
   });
 
-  // 4. Immersive Page Background Toggle (projects 360 panorama on full page canvas)
-  const [isImmersivePageBg, setIsImmersivePageBg] = useState<boolean>(() => {
-    return localStorage.getItem('plantao_immersive_bg') === 'true';
-  });
+
 
   // View Mode: 'mural3d' | 'grid'
   const [viewMode, setViewMode] = useState<'mural3d' | 'grid'>('mural3d');
@@ -129,9 +126,7 @@ export function PassagemPlantao() {
     localStorage.setItem('plantao_wallpaper_360_id', activeWallpaperTheme.id);
   }, [activeWallpaperTheme]);
 
-  useEffect(() => {
-    localStorage.setItem('plantao_immersive_bg', isImmersivePageBg.toString());
-  }, [isImmersivePageBg]);
+
 
   const activeUser = useMemo(() => {
     return users.find((u) => u.id === currentActiveUserId) || users[0];
@@ -228,18 +223,7 @@ export function PassagemPlantao() {
 
   return (
     <div className="relative space-y-6 pb-16 animate-fade-in text-slate-200">
-      {/* Immersive 360 Full Page Background Layer when active */}
-      {isImmersivePageBg && (
-        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-          <img
-            src={activeWallpaperTheme.image}
-            alt="Papel de Parede 360 Fundo"
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover scale-110 blur-xl opacity-20 transform -translate-y-6 transition-all duration-700"
-          />
-          <div className="absolute inset-0 bg-[#080c14]/85 backdrop-blur-3xl" />
-        </div>
-      )}
+
 
       {/* Top Hero Banner with 3D Icons & 4K Theme Indicator */}
       <div className="relative z-10 rounded-3xl p-6 sm:p-7 bg-gradient-to-r from-[#19130d] via-[#121825] to-[#0c1018] border-2 border-[#c9a265]/50 shadow-[0_15px_45px_rgba(0,0,0,0.7)] overflow-hidden">
@@ -399,9 +383,6 @@ export function PassagemPlantao() {
         {/* 360 Interactive WebGL Three.js Component with 4K Texture Support */}
         <FestivalCafe360Viewer
           activeTheme={activeWallpaperTheme}
-          onChangeTheme={(newTheme) => setActiveWallpaperTheme(newTheme)}
-          isPageBackgroundActive={isImmersivePageBg}
-          onTogglePageBackground={(enabled) => setIsImmersivePageBg(enabled)}
           onSelectHotspot={(hotspot) => {
             if (hotspot === 'mural') {
               const el = document.getElementById('mural-pastas-section');
@@ -411,60 +392,6 @@ export function PassagemPlantao() {
         />
       </div>
 
-      {/* Quick Wallpaper 4K Theme Thumbnails Strip */}
-      <div className="relative z-10 p-4 rounded-3xl bg-[#0f1420]/90 border border-[#232f45] shadow-xl space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <ImageIcon className="w-4 h-4 text-[#dfbe85]" />
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-              Seletor Rápido de Papéis de Parede 4K 360°
-            </h3>
-          </div>
-          <span className="text-[11px] text-slate-400">
-            {WALLPAPERS_360_THEMES.length} cenários disponíveis
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-          {WALLPAPERS_360_THEMES.map((theme) => {
-            const isSelected = activeWallpaperTheme.id === theme.id;
-            return (
-              <button
-                key={theme.id}
-                onClick={() => setActiveWallpaperTheme(theme)}
-                className={`relative rounded-2xl overflow-hidden border-2 transition-all duration-300 cursor-pointer p-1 text-left group ${
-                  isSelected
-                    ? 'border-[#c9a265] bg-[#1a2538] shadow-[0_0_15px_rgba(201,162,101,0.3)] scale-[1.02]'
-                    : 'border-[#223046] bg-[#0c1017] hover:border-[#dfbe85]/60 hover:bg-[#141b28]'
-                }`}
-              >
-                <div className="relative h-16 rounded-xl overflow-hidden">
-                  <img
-                    src={theme.image}
-                    alt={theme.name}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-                  
-                  {isSelected && (
-                    <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded-full bg-[#c9a265] text-[#140e06] text-[8.5px] font-extrabold flex items-center space-x-0.5 shadow">
-                      <Check className="w-2.5 h-2.5 stroke-[3]" />
-                      <span>4K</span>
-                    </span>
-                  )}
-
-                  <div className="absolute bottom-1 left-1.5 right-1.5">
-                    <p className="text-[10px] font-bold text-white truncate font-serif">
-                      {theme.name}
-                    </p>
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       {/* Section Header: Mural 3D de Pastas */}
       <div id="mural-pastas-section" className="relative z-10 pt-2 space-y-4">

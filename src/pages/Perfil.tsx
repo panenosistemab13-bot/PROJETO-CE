@@ -1,27 +1,70 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { User, getAuthUsers, saveAuthUsers, updateCurrentUserSession, getCurrentUser } from '../lib/authStore';
-import { Camera, Save, KeyRound, User as UserIcon, CheckCircle2, AlertTriangle, Eye, EyeOff } from 'lucide-react';
+import { Camera, Save, KeyRound, User as UserIcon, CheckCircle2, AlertTriangle, Eye, EyeOff, Briefcase, Plus, Trash2, X } from 'lucide-react';
+
+const DEFAULT_ROLES = ['Líder', 'Interino', 'Operador', 'Mestre', 'Administrador CCO'];
+
+const getSavedRoles = () => {
+  const rolesStr = localStorage.getItem('cco_user_roles');
+  if (rolesStr) return JSON.parse(rolesStr);
+  return DEFAULT_ROLES;
+};
+
+const saveRoles = (roles: string[]) => {
+  localStorage.setItem('cco_user_roles', JSON.stringify(roles));
+};
 
 export function Perfil() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [profilePic, setProfilePic] = useState<string | undefined>();
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   
+  // Role management
+  const [availableRoles, setAvailableRoles] = useState<string[]>([]);
+  const [isAddingRole, setIsAddingRole] = useState(false);
+  const [newRole, setNewRole] = useState('');
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    setAvailableRoles(getSavedRoles());
     const user = getCurrentUser();
     if (user) {
       setCurrentUser(user);
       setLogin(user.login);
       setPassword(user.password);
       setProfilePic(user.profilePic);
+      setRole(user.role);
     }
   }, []);
+
+  const handleAddRole = () => {
+    if (!newRole.trim()) return;
+    if (availableRoles.includes(newRole.trim())) {
+      setErrorMsg('Esta função já existe.');
+      return;
+    }
+    const updatedRoles = [...availableRoles, newRole.trim()];
+    setAvailableRoles(updatedRoles);
+    saveRoles(updatedRoles);
+    setRole(newRole.trim());
+    setNewRole('');
+    setIsAddingRole(false);
+  };
+
+  const handleDeleteRole = (roleToDelete: string) => {
+    const updatedRoles = availableRoles.filter(r => r !== roleToDelete);
+    setAvailableRoles(updatedRoles);
+    saveRoles(updatedRoles);
+    if (role === roleToDelete) {
+      setRole(updatedRoles.length > 0 ? updatedRoles[0] : '');
+    }
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -36,8 +79,8 @@ export function Perfil() {
 
   const handleSave = () => {
     if (!currentUser) return;
-    if (!login.trim() || !password.trim()) {
-      setErrorMsg('Login e senha são obrigatórios.');
+    if (!login.trim() || !password.trim() || !role.trim()) {
+      setErrorMsg('Login, senha e função são obrigatórios.');
       setSuccessMsg('');
       return;
     }
@@ -51,7 +94,7 @@ export function Perfil() {
       return;
     }
 
-    const updatedUser = { ...currentUser, login, password, profilePic };
+    const updatedUser = { ...currentUser, login, password, profilePic, role };
     
     const newUsers = users.map(u => u.id === currentUser.id ? updatedUser : u);
     
@@ -160,6 +203,83 @@ export function Perfil() {
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex justify-between items-center">
+              <label className="text-[11px] font-bold text-slate-300">Função</label>
+              {!isAddingRole && (
+                <button 
+                  type="button" 
+                  onClick={() => setIsAddingRole(true)}
+                  className="text-[10px] text-[#c9a265] hover:text-white flex items-center"
+                >
+                  <Plus className="w-3 h-3 mr-1" /> Adicionar
+                </button>
+              )}
+            </div>
+            
+            {isAddingRole ? (
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={newRole}
+                  onChange={(e) => setNewRole(e.target.value)}
+                  placeholder="Nova função..."
+                  className="w-full px-3 py-2.5 rounded-xl bg-[#141b26]/90 border border-[#242d3d] focus:border-[#c9a265] text-sm text-slate-100 outline-none"
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddRole()}
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={handleAddRole}
+                  className="p-2.5 rounded-xl bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/40"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setIsAddingRole(false); setNewRole(''); }}
+                  className="p-2.5 rounded-xl bg-rose-600/20 text-rose-400 hover:bg-rose-600/40"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col space-y-2">
+                <div className="relative flex items-center">
+                  <div className="absolute left-3 text-slate-400">
+                    <Briefcase className="w-4 h-4 text-[#c9a265]" />
+                  </div>
+                  <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-[#141b26]/90 border border-[#242d3d] focus:border-[#c9a265] text-sm text-slate-100 outline-none appearance-none cursor-pointer"
+                  >
+                    {availableRoles.map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                </div>
+                {availableRoles.length > 1 && (
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {availableRoles.map(r => (
+                      <div key={r} className={`flex items-center space-x-1 px-2 py-1 rounded-md text-[10px] ${r === role ? 'bg-[#c9a265]/20 text-[#c9a265]' : 'bg-[#141b26] text-slate-400'}`}>
+                        <span>{r}</span>
+                        <button 
+                          type="button"
+                          onClick={() => handleDeleteRole(r)}
+                          className="hover:text-rose-400 ml-1"
+                          title="Remover função"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

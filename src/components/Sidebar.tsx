@@ -24,7 +24,7 @@ interface SidebarProps {
 export function Sidebar({ activeTab, setActiveTab, onOpenPromo, isCollapsed, setIsCollapsed }: SidebarProps) {
   const navItems = [
     { id: 'menu_inicial', label: 'Menu Inicial', icon: Home },
-    { id: 'passagem_plantao', label: 'Passagem de Plantão', icon: Coffee, badge: '3D 360°' },
+    { id: 'passagem_plantao', label: 'Passagem de Plantão', icon: Coffee },
     { id: 'ocorrencias', label: 'Ocorrências', icon: ClipboardList },
     { id: 'veiculos', label: 'Veículos', icon: Truck },
     { id: 'colaboradores', label: 'Colaboradores', icon: Users },
