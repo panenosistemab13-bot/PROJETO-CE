@@ -109,7 +109,7 @@ export default function App() {
             <Colaboradores />
           )}
 
-          {activeTab === 'passagem_plantao' && (
+          {(activeTab === 'ocorrencias' || activeTab === 'passagem_plantao') && (
             <PassagemPlantao />
           )}
 

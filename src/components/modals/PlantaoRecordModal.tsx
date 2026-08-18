@@ -180,10 +180,10 @@ export function PlantaoRecordModal({
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-bold text-white font-serif tracking-wide">
-                {editingRecord ? 'Editar Registro de Plantão' : 'Novo Registro de Plantão'}
+                {editingRecord ? 'Editar Ocorrência' : 'Nova Ocorrência'}
               </h3>
               <p className="text-[11px] text-slate-400">
-                Lançamento no Livro de Passagem de Turno CCO &bull; Grupo 3corações
+                Registro de Ocorrência no Livro CCO &bull; Grupo 3corações
               </p>
             </div>
           </div>
